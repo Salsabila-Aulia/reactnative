@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Firebase + Leaflet Map</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+
+    <!-- Font Awesome (icon delete) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        #map {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .btn-delete {
+            cursor: pointer;
+            margin-top: 6px;
+            padding: 6px 10px;
+            border: none;
+            background: transparent;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+    <!-- Firebase v8 CDN (dipakai di halaman HTML) -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+
+    <script>
+        // --- SESUAIKAN firebaseConfig dengan projectmu jika perlu ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyAx9yAT6dstWNoRY6ZvIdXHlqfbX7CpGmM",
+            authDomain: "reactnative-1d3a7.firebaseapp.com",
+            databaseURL: "https://reactnative-1d3a7-default-rtdb.firebaseio.com",
+            projectId: "reactnative-1d3a7",
+            storageBucket: "reactnative-1d3a7.firebasestorage.app",
+            messagingSenderId: "347284551705",
+            appId: "1:347284551705:web:ff056d92a7b21ad4121288"
+        };
+
+        // Initialize Firebase (di context WebView)
+        if (!firebase.apps || !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        // Initialize map
+        const map = L.map('map').setView([-5.8661, 110.4269], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        const markersLayer = L.layerGroup().addTo(map);
+
+        const pointsRef = database.ref('/points');
+
+        // Listen to DB changes and render markers
+        pointsRef.on('value', (snapshot) => {
+            const data = snapshot.val();
+            markersLayer.clearLayers();
+
+            if (!data) return;
+
+            Object.keys(data).forEach((key) => {
+                const point = data[key];
+                if (!point || !point.coordinates) return;
+
+                // Expect coordinates as "lat,lng"
+                const coords = point.coordinates.split(',').map(c => parseFloat(c.trim()));
+                if (coords.length < 2 || isNaN(coords[0]) || isNaN(coords[1])) return;
+
+                const marker = L.marker(coords).addTo(markersLayer);
+
+                // popup: tombol delete akan mengirim pesan ke React Native WebView
+                const popupHtml = `
+          <div>
+            <b>${point.name ? point.name : 'Tanpa Nama'}</b><br/>
+            ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}<br/>
+            <button class="btn-delete" onclick="requestDelete('${key}', '${(point.name || '').replace(/'/g, "\\'")}')">
+              <i class="fa-solid fa-trash"></i> Hapus
+            </button>
+          </div>
+        `;
+                marker.bindPopup(popupHtml);
+            });
+        }, (err) => {
+            console.error('Firebase read error', err);
+        });
+
+        // Function used by the delete button in popup
+        function requestDelete(key, name) {
+            const payload = { type: 'delete', key, name };
+            // If inside React Native WebView, send message to native
+            if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+                window.ReactNativeWebView.postMessage(JSON.stringify(payload));
+            } else {
+                // Fallback: if opened in a browser, use confirm and delete directly
+                if (confirm(`Hapus lokasi "${name}"?`)) {
+                    pointsRef.child(key).remove();
+                }
+            }
+        }
+
+        // Optional: handle messages FROM React Native if needed
+        window.addEventListener('message', (evt) => {
+            try {
+                const d = typeof evt.data === 'string' ? JSON.parse(evt.data) : evt.data;
+                if (d && d.type === 'refresh') {
+                    // already listening real-time; but can force reload if requested
+                    // location.reload();
+                }
+            } catch (e) { /* ignore */ }
+        });
+    </script>
+</body>
+
+</html>
