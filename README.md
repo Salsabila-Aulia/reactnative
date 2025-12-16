@@ -1,50 +1,32 @@
-# Welcome to your Expo app 👋
+🌴 JEJAK – Jelajah Eksotis Karimunjawa
+Aplikasi interaktif berbasis geospasial untuk menampilkan informasi wisata unggulan Karimunjawa melalui peta digital.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+📝 Deskripsi Produk
+JEJAK merupakan aplikasi informasi wisata yang memanfaatkan teknologi Sistem Informasi Geografis (SIG) untuk menampilkan berbagai destinasi wisata Karimunjawa, seperti pantai, pulau kecil, spot snorkeling, dan kawasan konservasi laut. Aplikasi ini menyajikan peta interaktif dengan fitur pencarian, filter kategori, popup informasi, serta navigasi ke Google Maps, sehingga membantu pengguna dalam mengenal lokasi wisata dan merencanakan perjalanan secara efektif. JEJAK dikembangkan sebagai media promosi wisata digital sekaligus pendukung pengembangan ekowisata berkelanjutan.
 
-## Get started
+🧩 Teknologi & Komponen
 
-1. Install dependencies
+1. Frontend: React Native, Expo Router
 
-   ```bash
-   npm install
-   ```
+2. Peta Interaktif: Leaflet JS (melalui WebView)
 
-2. Start the app
+3. Backend: Firebase Realtime Database
 
-   ```bash
-   npx expo start
-   ```
+4. Integrasi: Google Maps Navigation
 
-In the output, you'll find options to open the app in a
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+✨ Fitur Utama
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. Peta interaktif objek wisata Karimunjawa
 
-## Get a fresh project
+2. Marker & popup informasi lokasi
 
-When you're ready, run:
+3. Pencarian dan filter kategori wisata
 
-```bash
-npm run reset-project
-```
+4. Simpan lokasi favorit
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+5. Navigasi langsung ke Google Maps
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+🗂️ Sumber Data
+Data yang digunakan dalam aplikasi JEJAK terdiri dari data spasial dan nonspasial. Data spasial mencakup titik lokasi objek wisata seperti pantai, pulau kecil, spot snorkeling, dan kawasan konservasi laut di wilayah Karimunjawa. Data nonspasial berupa informasi atribut objek wisata yang diperoleh dari sumber sekunder seperti publikasi pariwisata, instansi terkait, serta hasil pengolahan dan kompilasi mandiri untuk mendukung visualisasi dan penyajian informasi dalam aplikasi.
+   
